@@ -10,14 +10,14 @@ import {
 
 @InputType()
 export class AuthRegisterInput {
-  @IsString()
-  @IsEmail()
+  @IsString({ message: Errors.MUST_BE_A_STRING })
+  @IsEmail({}, { message: Errors.MUST_BE_AN_EMAIL })
   @Field()
   email: string;
 
-  @IsString()
-  @MinLength(8)
-  @MaxLength(32)
+  @IsString({ message: Errors.MUST_BE_A_STRING })
+  @MinLength(8, { message: Errors.STRING_TOO_SHORT })
+  @MaxLength(32, { message: Errors.STRING_TOO_LONG })
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: Errors.WEAK_PASSWORD,
   })
