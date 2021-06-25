@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Errors } from '../../common/errors';
 import {
   IsString,
   IsEmail,
@@ -18,7 +19,7 @@ export class AuthRegisterInput {
   @MinLength(8)
   @MaxLength(32)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password is too weak',
+    message: Errors.WEAK_PASSWORD,
   })
   @Field()
   password: string;

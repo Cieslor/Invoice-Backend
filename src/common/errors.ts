@@ -1,0 +1,5 @@
+export enum Errors {
+  WEAK_PASSWORD = 'E0001',
+  CHECK_LOGIN_CREDENTIALS = 'E0002',
+  USER_ALREADY_EXISTS = 'E0003',
+}
