@@ -7,7 +7,7 @@ import { InvoiceService } from './invoice.service';
 import { GqlAuthGuard, GetUser, User } from '../auth';
 
 @UseGuards(GqlAuthGuard)
-@Resolver(() => Invoice)
+@Resolver()
 export class InvoiceResolver {
   constructor(private service: InvoiceService) {}
 
@@ -26,5 +26,14 @@ export class InvoiceResolver {
     @GetUser() user: User,
   ) {
     return this.service.getInvoiceById(id, user._id);
+  }
+
+  @Mutation(() => Invoice)
+  deleteInvoice(
+    @Args('id', { type: () => String })
+    id: Schema.Types.ObjectId,
+    @GetUser() user: User,
+  ) {
+    return this.service.deleteInvoice(id, user._id);
   }
 }

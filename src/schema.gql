@@ -65,6 +65,7 @@ type Query {
 
 type Mutation {
   createInvoice(input: CreateInvoiceInput!): Invoice!
+  deleteInvoice(id: String!): Invoice!
   login(input: AuthLoginInput!): UserToken!
   register(input: AuthRegisterInput!): User!
 }

@@ -21,17 +21,16 @@ export class InvoiceService {
     input: CreateInvoiceInput,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    const invoice = await this.invoiceModel.create({
-      ...input,
-      createdAt: new Date(),
-      items: input.items.map((item) => ({
-        ...item,
-        totalPrice: item.quantity * item.price,
-      })),
-      user: userId,
-    });
-
     try {
+      const invoice = await this.invoiceModel.create({
+        ...input,
+        createdAt: new Date(),
+        items: input.items.map((item) => ({
+          ...item,
+          totalPrice: item.quantity * item.price,
+        })),
+        user: userId,
+      });
       await invoice.save();
       return invoice;
     } catch (error) {
@@ -47,17 +46,50 @@ export class InvoiceService {
     id: Schema.Types.ObjectId,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    const found = await this.invoiceModel
-      .findOne({
-        _id: id,
-        user: userId,
-      })
-      .exec();
+    let found;
+
+    try {
+      found = await this.invoiceModel
+        .findOne({
+          _id: id,
+          user: userId,
+        })
+        .exec();
+    } catch (error) {
+      this.logger.error(`Failed to get invoice with ID "${id}".`, error.stack);
+      throw new InternalServerErrorException();
+    }
 
     if (!found) {
       throw new NotFoundException(`Invoice with ID "${id}" not found.`);
     }
 
     return found;
+  }
+
+  async deleteInvoice(
+    id: Schema.Types.ObjectId,
+    userId: Schema.Types.ObjectId,
+  ): Promise<Invoice> {
+    let result;
+
+    try {
+      result = await this.invoiceModel.findOneAndDelete({
+        _id: id,
+        user: userId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete invoice with ID "${id}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+
+    if (!result) {
+      throw new NotFoundException(`Invoice with ID "${id}" not found.`);
+    }
+
+    return result;
   }
 }
