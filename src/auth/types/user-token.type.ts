@@ -3,9 +3,9 @@ import { User } from './user.type';
 
 @ObjectType()
 export class UserToken {
-  @Field(() => String)
-  accessToken: string;
+  @Field(() => String, { nullable: true })
+  accessToken?: string;
 
-  @Field(() => User)
-  user: User;
+  @Field(() => User, { nullable: true })
+  user?: User;
 }
