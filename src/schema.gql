@@ -59,6 +59,7 @@ type UserToken {
 }
 
 type Query {
+  getInvoiceById(id: String!): Invoice!
   sayHello: String!
 }
 

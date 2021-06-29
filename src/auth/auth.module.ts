@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { User, UserSchema } from './models/user.model';
 import { JwtStrategy } from './jwt.strategy';
+import { GqlAuthGuard } from './guards/gql-auth.guard';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { JwtStrategy } from './jwt.strategy';
       }),
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtStrategy],
+  providers: [AuthService, AuthResolver, JwtStrategy, GqlAuthGuard],
   exports: [JwtStrategy, PassportModule],
 })
 export class AuthModule {}
