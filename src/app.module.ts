@@ -18,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get('DB_URL'),
         useCreateIndex: true,
+        useFindAndModify: false,
       }),
     }),
     GraphQLModule.forRoot({

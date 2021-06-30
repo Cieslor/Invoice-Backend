@@ -5,6 +5,7 @@ import { Invoice } from './types/invoice.type';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
 import { InvoiceService } from './invoice.service';
 import { GqlAuthGuard, GetUser, User } from '../auth';
+import { InvoiceStatus } from './enums/invoice-status.enum';
 
 @UseGuards(GqlAuthGuard)
 @Resolver()
@@ -26,6 +27,15 @@ export class InvoiceResolver {
     @GetUser() user: User,
   ) {
     return this.service.getInvoiceById(id, user._id);
+  }
+
+  @Mutation(() => Invoice)
+  updateInvoiceStatus(
+    @Args('id', { type: () => String }) id: Schema.Types.ObjectId,
+    @Args('status', { type: () => InvoiceStatus }) status: InvoiceStatus,
+    @GetUser() user: User,
+  ) {
+    return this.service.updateInvoiceStatus(id, status, user._id);
   }
 
   @Mutation(() => Invoice)

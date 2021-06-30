@@ -8,6 +8,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema } from 'mongoose';
 import { Invoice, InvoiceDocument } from './models/invoice.model';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
+import { InvoiceStatus } from './enums/invoice-status.enum';
 
 @Injectable()
 export class InvoiceService {
@@ -65,6 +66,37 @@ export class InvoiceService {
     }
 
     return found;
+  }
+
+  async updateInvoiceStatus(
+    id: Schema.Types.ObjectId,
+    status: InvoiceStatus,
+    userId: Schema.Types.ObjectId,
+  ): Promise<Invoice> {
+    let result;
+
+    try {
+      result = await this.invoiceModel.findOneAndUpdate(
+        {
+          _id: id,
+          user: userId,
+        },
+        { status },
+        { new: true },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to update status of invoice with ID "${id}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+
+    if (!result) {
+      throw new NotFoundException(`Invoice with ID "${id}" not found.`);
+    }
+
+    return result;
   }
 
   async deleteInvoice(
