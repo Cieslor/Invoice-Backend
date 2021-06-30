@@ -18,9 +18,4 @@ export class AuthResolver {
   register(@Args('input') input: AuthRegisterInput) {
     return this.service.register(input);
   }
-
-  @Query(() => String)
-  sayHello(): string {
-    return 'Hello World!';
-  }
 }
