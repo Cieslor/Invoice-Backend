@@ -9,6 +9,7 @@ import { Model, Schema } from 'mongoose';
 import { Invoice, InvoiceDocument } from './models/invoice.model';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
 import { InvoiceStatus } from './enums/invoice-status.enum';
+import { UpdateInvoiceInput } from './dto/update-invoice.input';
 
 @Injectable()
 export class InvoiceService {
@@ -25,7 +26,6 @@ export class InvoiceService {
     try {
       const invoice = await this.invoiceModel.create({
         ...input,
-        createdAt: new Date(),
         items: input.items.map((item) => ({
           ...item,
           totalPrice: item.quantity * item.price,
@@ -87,6 +87,43 @@ export class InvoiceService {
     } catch (error) {
       this.logger.error(
         `Failed to update status of invoice with ID "${id}".`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+
+    if (!result) {
+      throw new NotFoundException(`Invoice with ID "${id}" not found.`);
+    }
+
+    return result;
+  }
+
+  async updateInvoice(
+    id: Schema.Types.ObjectId,
+    input: UpdateInvoiceInput,
+    userId: Schema.Types.ObjectId,
+  ): Promise<Invoice> {
+    let result;
+
+    try {
+      result = await this.invoiceModel.findOneAndUpdate(
+        {
+          _id: id,
+          user: userId,
+        },
+        {
+          ...input,
+          items: input.items.map((item) => ({
+            ...item,
+            totalPrice: item.quantity * item.price,
+          })),
+        },
+        { new: true },
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to update invoice with ID "${id}".`,
         error.stack,
       );
       throw new InternalServerErrorException();

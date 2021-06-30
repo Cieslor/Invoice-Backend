@@ -65,6 +65,7 @@ type Query {
 type Mutation {
   createInvoice(input: CreateInvoiceInput!): Invoice!
   updateInvoiceStatus(status: InvoiceStatus!, id: String!): Invoice!
+  updateInvoice(input: UpdateInvoiceInput!, id: String!): Invoice!
   deleteInvoice(id: String!): Invoice!
   login(input: AuthLoginInput!): UserToken!
   register(input: AuthRegisterInput!): User!
@@ -92,6 +93,24 @@ input InvoiceItemInput {
   name: String!
   price: Float!
   quantity: Int!
+}
+
+input UpdateInvoiceInput {
+  fromCity: String
+  fromStreetAddress: String
+  fromCountry: String
+  fromPostCode: String
+  invoiceDate: DateTime
+  paymentTerms: PaymentTerms
+  projectDescription: String
+  status: InvoiceStatus
+  toCity: String
+  toStreetAddress: String
+  toCountry: String
+  toPostCode: String
+  clientsName: String
+  clientsEmail: String
+  items: [InvoiceItemInput!]
 }
 
 input AuthLoginInput {

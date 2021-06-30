@@ -6,13 +6,13 @@ export class InvoiceItem {
   @Prop()
   name: string;
 
-  @Prop(Number)
+  @Prop()
   price: number;
 
-  @Prop(Number)
+  @Prop()
   quantity: number;
 
-  @Prop(Number)
+  @Prop()
   totalPrice: number;
 }
 

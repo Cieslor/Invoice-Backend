@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema, Document } from 'mongoose';
+import { User } from 'src/auth';
 import { InvoiceStatus } from '../enums/invoice-status.enum';
 import { PaymentTerms } from '../enums/payment-terms.enum';
 import { InvoiceItem, InvoiceItemSchema } from './invoice-item.model';
@@ -8,7 +9,7 @@ import { InvoiceItem, InvoiceItemSchema } from './invoice-item.model';
 export class Invoice {
   _id: MongooseSchema.Types.ObjectId;
 
-  @Prop()
+  @Prop({ default: Date.now })
   createdAt: Date;
 
   @Prop()
@@ -23,7 +24,7 @@ export class Invoice {
   @Prop()
   fromPostCode: string;
 
-  @Prop()
+  @Prop({ default: Date.now })
   invoiceDate: Date;
 
   @Prop()
@@ -56,7 +57,7 @@ export class Invoice {
   @Prop({ type: [InvoiceItemSchema] })
   items: InvoiceItem[];
 
-  @Prop(MongooseSchema.Types.ObjectId)
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: User.name })
   user: MongooseSchema.Types.ObjectId;
 }
 
