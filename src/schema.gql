@@ -2,23 +2,117 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type InvoiceItem {
+  name: String
+  price: Float
+  quantity: Int
+  totalPrice: Float
+}
+
+type Invoice {
+  _id: String
+  createdAt: DateTime
+  fromCity: String
+  fromStreetAddress: String
+  fromCountry: String
+  fromPostCode: String
+  invoiceDate: DateTime
+  paymentTerms: PaymentTerms
+  projectDescription: String
+  status: InvoiceStatus
+  toCity: String
+  toStreetAddress: String
+  toCountry: String
+  toPostCode: String
+  clientsName: String
+  clientsEmail: String
+  items: [InvoiceItem!]
+  user: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+enum PaymentTerms {
+  One
+  Seven
+  Fourteen
+  Thirty
+}
+
+enum InvoiceStatus {
+  Pending
+  Draft
+  Paid
+}
+
 type User {
   _id: String
   email: String
 }
 
 type UserToken {
-  accessToken: String!
-  user: User!
+  accessToken: String
+  user: User
 }
 
 type Query {
-  sayHello: String!
+  getInvoiceById(id: String!): Invoice!
+  getInvoices(limit: Int, offset: Int, status: InvoiceStatus): [Invoice!]!
+  getInvoicesNumber(status: InvoiceStatus): Float!
 }
 
 type Mutation {
+  createInvoice(input: CreateInvoiceInput!): Invoice!
+  updateInvoiceStatus(status: InvoiceStatus!, id: String!): Invoice!
+  updateInvoice(input: UpdateInvoiceInput!, id: String!): Invoice!
+  deleteInvoice(id: String!): Invoice!
   login(input: AuthLoginInput!): UserToken!
   register(input: AuthRegisterInput!): User!
+}
+
+input CreateInvoiceInput {
+  fromCity: String!
+  fromStreetAddress: String!
+  fromCountry: String!
+  fromPostCode: String!
+  invoiceDate: DateTime!
+  paymentTerms: PaymentTerms!
+  projectDescription: String!
+  status: InvoiceStatus!
+  toCity: String!
+  toStreetAddress: String!
+  toCountry: String!
+  toPostCode: String!
+  clientsName: String!
+  clientsEmail: String!
+  items: [InvoiceItemInput!]!
+}
+
+input InvoiceItemInput {
+  name: String!
+  price: Float!
+  quantity: Int!
+}
+
+input UpdateInvoiceInput {
+  fromCity: String
+  fromStreetAddress: String
+  fromCountry: String
+  fromPostCode: String
+  invoiceDate: DateTime
+  paymentTerms: PaymentTerms
+  projectDescription: String
+  status: InvoiceStatus
+  toCity: String
+  toStreetAddress: String
+  toCountry: String
+  toPostCode: String
+  clientsName: String
+  clientsEmail: String
+  items: [InvoiceItemInput!]
 }
 
 input AuthLoginInput {
