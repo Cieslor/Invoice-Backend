@@ -48,19 +48,12 @@ export class InvoiceService {
     id: Schema.Types.ObjectId,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    let found;
-
-    try {
-      found = await this.invoiceModel
-        .findOne({
-          _id: id,
-          user: userId,
-        })
-        .exec();
-    } catch (error) {
-      this.logger.error(`Failed to get invoice with ID "${id}".`, error.stack);
-      throw new InternalServerErrorException();
-    }
+    const found = await this.invoiceModel
+      .findOne({
+        _id: id,
+        user: userId,
+      })
+      .exec();
 
     if (!found) {
       throw new NotFoundException(`Invoice with ID "${id}" not found.`);
@@ -83,21 +76,14 @@ export class InvoiceService {
       filter.status = status;
     }
 
-    try {
-      const invoices = await this.invoiceModel
-        .find(filter)
-        .sort({ createdAt: -1 })
-        .skip(offset)
-        .limit(limit)
-        .exec();
-      return invoices;
-    } catch (error) {
-      this.logger.error(
-        `Failed to get invoices for "${userId}" - limit: ${limit}, offset: ${offset}.`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
+    const invoices = await this.invoiceModel
+      .find(filter)
+      .sort({ createdAt: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
+
+    return invoices;
   }
 
   async getInvoicesNumber(
@@ -112,18 +98,11 @@ export class InvoiceService {
       filter.status = status;
     }
 
-    try {
-      const numberOfInvoices = await this.invoiceModel
-        .countDocuments(filter)
-        .exec();
-      return numberOfInvoices;
-    } catch (error) {
-      this.logger.error(
-        `Failed to count invoices for "${userId}"`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
+    const numberOfInvoices = await this.invoiceModel
+      .countDocuments(filter)
+      .exec();
+
+    return numberOfInvoices;
   }
 
   async updateInvoiceStatus(
@@ -131,24 +110,14 @@ export class InvoiceService {
     status: InvoiceStatus,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    let result;
-
-    try {
-      result = await this.invoiceModel.findOneAndUpdate(
-        {
-          _id: id,
-          user: userId,
-        },
-        { status },
-        { new: true },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to update status of invoice with ID "${id}".`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
+    const result = await this.invoiceModel.findOneAndUpdate(
+      {
+        _id: id,
+        user: userId,
+      },
+      { status },
+      { new: true },
+    );
 
     if (!result) {
       throw new NotFoundException(`Invoice with ID "${id}" not found.`);
@@ -162,30 +131,20 @@ export class InvoiceService {
     input: UpdateInvoiceInput,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    let result;
-
-    try {
-      result = await this.invoiceModel.findOneAndUpdate(
-        {
-          _id: id,
-          user: userId,
-        },
-        {
-          ...input,
-          items: input.items.map((item) => ({
-            ...item,
-            totalPrice: item.quantity * item.price,
-          })),
-        },
-        { new: true },
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to update invoice with ID "${id}".`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
+    const result = await this.invoiceModel.findOneAndUpdate(
+      {
+        _id: id,
+        user: userId,
+      },
+      {
+        ...input,
+        items: input.items.map((item) => ({
+          ...item,
+          totalPrice: item.quantity * item.price,
+        })),
+      },
+      { new: true },
+    );
 
     if (!result) {
       throw new NotFoundException(`Invoice with ID "${id}" not found.`);
@@ -198,20 +157,10 @@ export class InvoiceService {
     id: Schema.Types.ObjectId,
     userId: Schema.Types.ObjectId,
   ): Promise<Invoice> {
-    let result;
-
-    try {
-      result = await this.invoiceModel.findOneAndDelete({
-        _id: id,
-        user: userId,
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to delete invoice with ID "${id}".`,
-        error.stack,
-      );
-      throw new InternalServerErrorException();
-    }
+    const result = await this.invoiceModel.findOneAndDelete({
+      _id: id,
+      user: userId,
+    });
 
     if (!result) {
       throw new NotFoundException(`Invoice with ID "${id}" not found.`);
