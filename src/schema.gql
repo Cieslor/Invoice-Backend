@@ -60,6 +60,8 @@ type UserToken {
 
 type Query {
   getInvoiceById(id: String!): Invoice!
+  getInvoices(limit: Int, offset: Int, status: InvoiceStatus): [Invoice!]!
+  getInvoicesNumber(status: InvoiceStatus): Float!
 }
 
 type Mutation {

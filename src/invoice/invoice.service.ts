@@ -10,6 +10,7 @@ import { Invoice, InvoiceDocument } from './models/invoice.model';
 import { CreateInvoiceInput } from './dto/create-invoice.input';
 import { InvoiceStatus } from './enums/invoice-status.enum';
 import { UpdateInvoiceInput } from './dto/update-invoice.input';
+import { GetInvoicesArgs } from './dto/get-invoices.args';
 
 @Injectable()
 export class InvoiceService {
@@ -66,6 +67,63 @@ export class InvoiceService {
     }
 
     return found;
+  }
+
+  async getInvoices(
+    args: GetInvoicesArgs,
+    userId: Schema.Types.ObjectId,
+  ): Promise<Invoice[]> {
+    const { limit, offset, status } = args;
+
+    const filter: Record<string, any> = {
+      user: userId,
+    };
+
+    if (status) {
+      filter.status = status;
+    }
+
+    try {
+      const invoices = await this.invoiceModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip(offset)
+        .limit(limit)
+        .exec();
+      return invoices;
+    } catch (error) {
+      this.logger.error(
+        `Failed to get invoices for "${userId}" - limit: ${limit}, offset: ${offset}.`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async getInvoicesNumber(
+    userId: Schema.Types.ObjectId,
+    status?: InvoiceStatus,
+  ): Promise<number> {
+    const filter: Record<string, any> = {
+      user: userId,
+    };
+
+    if (status) {
+      filter.status = status;
+    }
+
+    try {
+      const numberOfInvoices = await this.invoiceModel
+        .countDocuments(filter)
+        .exec();
+      return numberOfInvoices;
+    } catch (error) {
+      this.logger.error(
+        `Failed to count invoices for "${userId}"`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async updateInvoiceStatus(
